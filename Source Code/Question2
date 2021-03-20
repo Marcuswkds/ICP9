@@ -36,8 +36,8 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['ac
 history = model.fit(train_data, train_labels_one_hot, batch_size=256, epochs=10, verbose=1, validation_data=(test_data, test_labels_one_hot))
 
 # Plotting the first image.
-plt.imshow(test_images[1])
-plt.title("First Image")
+plt.imshow(test_images[1], cmap='gray')
+plt.title("Test Image")
 plt.show()
 
 # Predicting the Test image.
