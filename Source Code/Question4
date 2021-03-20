@@ -1,0 +1,52 @@
+# Importing modules and libraries.
+from keras import Sequential
+from keras.datasets import mnist
+import numpy as np
+from keras.layers import Dense
+from keras.utils import to_categorical
+import matplotlib.pyplot as plt
+import os
+
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+print(train_images.shape[1:])
+
+# Converting image of shape 28*28 to 784 dimensional to be fed to the network as a single feature.
+dimData = np.prod(train_images.shape[1:])
+print(dimData)
+train_data = train_images.reshape(train_images.shape[0], dimData)
+test_data = test_images.reshape(test_images.shape[0], dimData)
+
+# Converting data to float type.
+train_data = train_data.astype('float')
+test_data = test_data.astype('float')
+train_labels_one_hot = to_categorical(train_labels)
+test_labels_one_hot = to_categorical(test_labels)
+
+
+model = Sequential()
+model.add(Dense(512, activation='relu', input_shape=(dimData,)))
+model.add(Dense(512, activation='relu'))  # Adding hidden layer with 512 nodes.
+model.add(Dense(10, activation='softmax'))  # Adding output layer.
+model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Training the model.
+history = model.fit(train_data, train_labels_one_hot, batch_size=256, epochs=10, verbose=1, validation_data=(test_data, test_labels_one_hot))
+
+# Plotting the graph of Accuracy.
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('Model Accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epochs')
+plt.legend(['train', 'val'], loc='upper left')
+plt.show()
+
+# Plotting the graph of Loss.
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model Loss')
+plt.ylabel('Loss')
+plt.xlabel('Epochs')
+plt.legend(['train', 'val'], loc='upper left')
+plt.show()
